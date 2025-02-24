@@ -19,6 +19,7 @@ const initialState = {
   HaveYouAppliedBefore: "",
   AreYouCurrentlyRecievingSocialSecurityPayment: "",
   "HaveYouBeenVerifiedBy ID.ME": "",
+  "W2 1099 ssa form": null as File | null,
   DriverLicenseFront: null as File | null,
   DriverLicenseBack: null as File | null,
 }
@@ -143,7 +144,7 @@ export default function SurveyForm() {
                     Female
                   </label>
                 </div>
-              ) : key.includes("License") ? (
+              ) : key.includes("License") || key === "W2_1099_SSA_Form" ? (
                 <input
                   id={key}
                   name={key}
@@ -188,4 +189,3 @@ export default function SurveyForm() {
     </div>
   )
 }
-
