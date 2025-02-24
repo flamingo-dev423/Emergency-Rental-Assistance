@@ -19,7 +19,7 @@ const initialState = {
   HaveYouAppliedBefore: "",
   AreYouCurrentlyRecievingSocialSecurityPayment: "",
   "HaveYouBeenVerifiedBy ID.ME": "",
-  "W2 1099 ssa form": null as File | null,
+  W21099SSAFORM: null as File | null,
   DriverLicenseFront: null as File | null,
   DriverLicenseBack: null as File | null,
 }
@@ -114,7 +114,7 @@ export default function SurveyForm() {
           {Object.entries(initialState).map(([key, _], index) => (
             <div key={key}>
               <label htmlFor={key} className="block text-xl mb-2">
-                {index + 1}. {key.replace(/([A-Z])/g, " $1").trim()}
+                {index + 1}. {key === "W21099SSAFORM" ? "W2 1099 SSA FORM" : key.replace(/([A-Z])/g, " $1").trim()}
               </label>
 
               {key === "Gender" ? (
@@ -144,7 +144,7 @@ export default function SurveyForm() {
                     Female
                   </label>
                 </div>
-              ) : key.includes("License") || key === "W2_1099_SSA_Form" ? (
+              ) : key.includes("License") || key === "W21099SSAFORM" ? (
                 <input
                   id={key}
                   name={key}
