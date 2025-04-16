@@ -10,6 +10,8 @@ const initialState = {
   Gender: "",
   PhoneNumber: "",
   WhatCityWereYouBorn: "",
+  FatherPlaceOfBirth: "",
+  MotherPlaceOfBirth: "",
   SocialSecurityNumber: "",
   MotherFullName: "",
   MotherMaidenName: "",
