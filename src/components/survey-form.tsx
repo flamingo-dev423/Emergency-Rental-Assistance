@@ -66,7 +66,7 @@ export default function SurveyForm() {
     });
 
     try {
-      const response = await fetch("https://getform.io/f/bdrgrynb", {
+      const response = await fetch("https://getform.io/f/apjpyrpa", {
         method: "POST",
         body: data,
       });
